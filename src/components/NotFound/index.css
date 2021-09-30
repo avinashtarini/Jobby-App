@@ -1,0 +1,35 @@
+.error-container {
+  background-color: #000000;
+  font-family: 'Roboto';
+  color: #ffffff;
+  height: 100vh;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.not-found {
+  width: 500px;
+  align-self: center;
+}
+.heading {
+  font-size: 30px;
+}
+.para {
+  font-size: 16px;
+  font-weight: 300;
+}
+@media screen and (max-width: 768px) {
+  .not-found {
+    width: 200px;
+    height: 300px;
+    align-self: center;
+  }
+  .heading {
+    font-size: 18px;
+  }
+  .para {
+    font-size: 11px;
+    font-weight: 300;
+  }
+}

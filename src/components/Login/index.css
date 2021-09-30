@@ -1,0 +1,81 @@
+.bg-container {
+  background-color: #000000;
+  height: 100vh;
+  font-family: 'Roboto';
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.inside-container {
+  background-color: #272727;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 25px;
+  border-radius: 12px;
+}
+.logo {
+  margin-top: 15px;
+  margin-bottom: 25px;
+}
+.form-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.text {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.input-text {
+  width: 300px;
+  background-color: transparent;
+  border: 1px solid #7e858e;
+  padding: 5px;
+  font-size: 15px;
+  color: #f8fafc;
+  outline: none;
+  border-radius: 7px;
+}
+.label-input {
+  color: #f8fafc;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+.btn {
+  background-color: #6366f1;
+  color: #ffffff;
+  font-size: 18px;
+  margin-top: 14px;
+  margin-bottom: 18px;
+  width: 100%;
+  border-radius: 7px;
+  border-width: 0px;
+  cursor: pointer;
+  padding: 7px;
+}
+@media screen and (max-width: 576px) {
+  .inside-container {
+    width: 80%;
+    padding: 12px;
+    border-radius: 8px;
+  }
+  .btn {
+    width: 100px;
+  }
+  .input-text {
+    width: 90%;
+  }
+  .logo {
+    width: 120px;
+    height: 100px;
+    text-align: center;
+  }
+}
+.error-msg {
+  color: #ff0b37;
+}
