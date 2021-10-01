@@ -7,10 +7,10 @@ class Login extends Component {
   state = {username: '', password: '', loginStatus: false, errorMsg: ''}
 
   onLoginSuccess = jwtToken => {
-    Cookies.set('jwt_token', jwtToken, {expires: 1})
     const {history} = this.props
+    Cookies.set('jwt_token', jwtToken, {expires: 1})
 
-    history.replace()('/')
+    history.replace('/')
   }
 
   onLoginFailure = error => {

@@ -44,12 +44,16 @@ const salaryRangesList = [
     label: '40 LPA and above',
   },
 ]
-
+const mergedList = [employmentTypesList, salaryRangesList]
 const App = () => (
   <Switch>
     <Route exact path="/login" component={Login} />
     <WrappedComponent exact path="/" component={Home} />
-    <WrappedComponent exact path="/jobs" component={Jobs} />
+    <WrappedComponent
+      exact
+      path="/jobs"
+      render={props => <Jobs {...props} mergedList={mergedList} />}
+    />
     <WrappedComponent exact path="/jobs/:id" component={JobItem} />
     <Route exact path="/bad-path" component={NotFound} />
     <Route component={NotFound} />

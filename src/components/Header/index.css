@@ -50,12 +50,21 @@
   }
   .nav-elements-mobile {
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     background-color: #cbd5e1;
     margin-right: 20px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 3px;
+    border-radius: 5px;
   }
   .menu-bar-item {
     background-color: #cbd5e1;
     height: 25px;
     width: 30px;
+    margin-bottom: 4px;
+    margin-top: 2px;
   }
 }
