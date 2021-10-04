@@ -5,7 +5,7 @@ import Cookies from 'js-cookie'
 import {v4 as uuidv4} from 'uuid'
 import {BsSearch} from 'react-icons/bs'
 import Header from '../Header'
-import FailureView from '../FailureView'
+
 import DisplayJobs from '../DisplayJobs'
 import './index.css'
 
@@ -21,6 +21,9 @@ class Jobs extends Component {
     profileList: {},
     jobDetailsList: [],
     apiRequestStatus: statusDetails.initial,
+    searchInput: '',
+    employment: '',
+    salaryRange: '',
   }
 
   componentDidMount() {
@@ -69,14 +72,17 @@ class Jobs extends Component {
       apiRequestStatus: statusDetails.inProgress,
     })
     const accessToken = Cookies.get('jwt_token')
-
+    const {searchInput, employment, salaryRange} = this.state
     const options = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
       method: 'GET',
     }
-    const details = await fetch('https://apis.ccbp.in/jobs', options)
+    const details = await fetch(
+      `https://apis.ccbp.in/jobs?employment_type=${employment}&minimum_package=${salaryRange}&search=${searchInput}`,
+      options,
+    )
     const dataFound = await details.json()
     if (details.ok === true) {
       const newData = dataFound.jobs
@@ -125,6 +131,23 @@ class Jobs extends Component {
     </button>
   )
 
+  renderJobDetailsFailureView = () => (
+    <div className="failure-container">
+      <img
+        src="https://assets.ccbp.in/frontend/react-js/failure-img.png"
+        alt="failure view"
+        className="failure-view"
+      />
+      <h1 className="failure-heading">Oops! Something Went Wrong</h1>
+      <p className="failure-bio">
+        We cannot seem to find the page you are looking for
+      </p>
+      <button onClick={this.retryPage} type="button" className="failure-btn">
+        Retry
+      </button>
+    </div>
+  )
+
   loadingElement = () => (
     <div className="loader-container" testid="loader">
       <Loader type="ThreeDots" color="#ffffff" height="50" width="50" />
@@ -158,7 +181,7 @@ class Jobs extends Component {
         ))
 
       case statusDetails.fail:
-        return <FailureView retryFunctionCall={this.retryPage} />
+        return this.renderJobDetailsFailureView()
 
       case statusDetails.inProgress:
         return this.loadingElement()
@@ -168,23 +191,49 @@ class Jobs extends Component {
     }
   }
 
+  onEnterSearchInput = event => {
+    if (event.key === 'Enter') {
+      this.getCompanyDetailsAPI()
+      console.log('tt')
+    }
+  }
+
+  onSearchButton = () => {
+    this.getCompanyDetailsAPI()
+  }
+
+  onChangeSearchInput = event => {
+    this.setState({searchInput: event.target.value})
+  }
+
+  changeEmploymentType = event => {
+    console.log(event.target.value)
+    this.setState({employment: event.target.value}, this.getCompanyDetailsAPI)
+  }
+
   getFirstFilteredList = () => {
     const {mergedList} = this.props
     const employmentTypesList = mergedList[0]
 
     return employmentTypesList.map(eachDataType => (
       <li className="list-salary" key={uuidv4()}>
-        <label htmlFor={eachDataType.employmentTypeId} className="label-text">
+        <label htmlFor={eachDataType.employmentTypeId}>
           {eachDataType.label}
         </label>
-        <br />
+
         <input
+          value={eachDataType.employmentTypeId}
           type="checkbox"
           id={eachDataType.employmentTypeId}
           className="input-text"
+          onChange={this.changeEmploymentType}
         />
       </li>
     ))
+  }
+
+  filterSalaryRange = event => {
+    this.setState({salaryRange: event.target.value}, this.getCompanyDetailsAPI)
   }
 
   getSecondFilteredList = () => {
@@ -196,17 +245,40 @@ class Jobs extends Component {
         <label htmlFor={eachDataSalary.salaryRangeId} className="label-text">
           {eachDataSalary.label}
         </label>
-        <br />
+
         <input
+          value={eachDataSalary.salaryRangeId}
+          onChange={this.filterSalaryRange}
           type="radio"
           id={eachDataSalary.salaryRangeId}
+          name="salary range"
           className="input-text"
         />
       </li>
     ))
   }
 
+  defaultAction = event => {
+    event.preventDefault()
+  }
+
+  renderNoJobsFound = () => (
+    <div className="display-no-results">
+      <img
+        src="https://assets.ccbp.in/frontend/react-js/no-jobs-img.png"
+        alt="no jobs"
+        className="no-jobs-logo"
+      />
+      <h1 className="no-jobs-heading">No Jobs Found</h1>
+      <p className="details-no-job">
+        We could not find any jobs. Try other filters
+      </p>
+    </div>
+  )
+
   render() {
+    const {searchInput, jobDetailsList} = this.state
+    const length = jobDetailsList.length > 0
     const jsToken = Cookies.get('jwt_token')
     if (jsToken === undefined) {
       return <Redirect to="/login" />
@@ -219,25 +291,39 @@ class Jobs extends Component {
             <div className="Job-profile">{this.getUserDetails()}</div>
             <div className="filter-container">
               <h1 className="common-name">Type of Employment</h1>
-              <ul className="ul-employment-list">
-                {this.getFirstFilteredList()}
-              </ul>
+              <form onClick={this.defaultAction}>
+                <ul className="ul-employment-list">
+                  {this.getFirstFilteredList()}
+                </ul>
+              </form>
             </div>
             <div className="filter-container">
               <h1 className="common-name">Salary Range</h1>
-              <ul className="ul-employment-list">
-                {this.getSecondFilteredList()}
-              </ul>
+              <form onClick={this.defaultAction}>
+                <ul className="ul-employment-list">
+                  {this.getSecondFilteredList()}
+                </ul>
+              </form>
             </div>
           </div>
           <div className="right-container">
             <div className="search-icon-container">
-              <input type="search" className="search-input" />
-              <button type="button" testid="searchButton">
+              <input
+                type="search"
+                value={searchInput}
+                onChange={this.onChangeSearchInput}
+                onKeyDown={this.onEnterSearchInput}
+                className="search-input"
+              />
+              <button
+                onClick={this.onSearchButton}
+                type="submit"
+                testid="searchButton"
+              >
                 <BsSearch className="search-icon" />
               </button>
             </div>
-            {this.getJobsDetails()}
+            {length ? this.getJobsDetails() : this.renderNoJobsFound()}
           </div>
         </div>
       </>
