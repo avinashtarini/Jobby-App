@@ -83,6 +83,7 @@ class Jobs extends Component {
     })
     const accessToken = Cookies.get('jwt_token')
     const {searchInput, employment, salaryRange} = this.state
+    console.log(employment)
     const options = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -218,12 +219,20 @@ class Jobs extends Component {
 
   changeEmploymentType = event => {
     console.log(event.target.value)
+    const {employment} = this.state
     const lastEmployment = event.target.value
-
-    this.setState(
-      prevList => ({employment: [...prevList.employment, lastEmployment]}),
-      this.getCompanyDetailsAPI,
-    )
+    if (employment.includes(lastEmployment)) {
+      const filteredList = employment.filter(
+        eachValue => eachValue !== lastEmployment,
+      )
+      console.log(filteredList)
+      this.setState({employment: filteredList}, this.getCompanyDetailsAPI)
+    } else {
+      this.setState(
+        prevList => ({employment: [...prevList.employment, lastEmployment]}),
+        this.getCompanyDetailsAPI,
+      )
+    }
   }
 
   getFirstFilteredList = () => {
