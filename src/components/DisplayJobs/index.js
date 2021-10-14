@@ -1,4 +1,8 @@
 import {Link} from 'react-router-dom'
+import {BsStarFill, BsBagFill} from 'react-icons/bs'
+import {MdLocationOn} from 'react-icons/md'
+
+import './index.css'
 
 const DisplayJobs = props => {
   const {jobDetailsList} = props
@@ -23,12 +27,25 @@ const DisplayJobs = props => {
               alt="company logo"
               className="company-logo"
             />
-            <h1 className="job-name">{title}</h1>
-            <p className="rating">{rating}</p>
+            <div className="rating-container">
+              <h1 className="job-name">{title}</h1>
+              <div className="rating-display">
+                <BsStarFill />
+                <p className="rating">{rating}</p>
+              </div>
+            </div>
           </div>
           <div className="package-container">
-            <p className="city">{location}</p>
-            <p className="job-type">{employmentType}</p>
+            <div className="class-on">
+              <div className="job-location-container">
+                <MdLocationOn className="icons-style" />
+                <p className="city">{location}</p>
+              </div>
+              <div className="job-location-container">
+                <BsBagFill className="icons-style" />
+                <p className="job-type">{employmentType}</p>
+              </div>
+            </div>
             <p className="salary">{packagePerAnnum}</p>
           </div>
           <div className="desc-container">

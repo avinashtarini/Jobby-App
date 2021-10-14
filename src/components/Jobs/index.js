@@ -2,7 +2,7 @@ import {Component} from 'react'
 import {Redirect} from 'react-router-dom'
 import Loader from 'react-loader-spinner'
 import Cookies from 'js-cookie'
-import {v4 as uuidv4} from 'uuid'
+
 import {BsSearch} from 'react-icons/bs'
 import Header from '../Header'
 
@@ -15,14 +15,21 @@ const statusDetails = {
   success: 'SUCCESS',
   fail: 'FAIL',
 }
+const profileStatusDetails = {
+  initial: 'INITIAL',
+  inProgress: 'PROCESS',
+  success: 'SUCCESS',
+  fail: 'FAIL',
+}
 
 class Jobs extends Component {
   state = {
     profileList: {},
     jobDetailsList: [],
     apiRequestStatus: statusDetails.initial,
+    apiProfileStatus: profileStatusDetails.initial,
     searchInput: '',
-    employment: '',
+    employment: [],
     salaryRange: '',
   }
 
@@ -33,7 +40,7 @@ class Jobs extends Component {
 
   getUserDetailsAPI = async () => {
     this.setState({
-      apiRequestStatus: statusDetails.inProgress,
+      apiProfileStatus: profileStatusDetails.inProgress,
     })
     const jwtToken = Cookies.get('jwt_token')
 
@@ -58,12 +65,15 @@ class Jobs extends Component {
       }
       this.setState({
         profileList: updatedUser,
-        apiRequestStatus: statusDetails.success,
+
+        apiProfileStatus: profileStatusDetails.success,
       })
     } else {
       console.log(request)
       console.log(data)
-      this.setState({apiRequestStatus: statusDetails.fail})
+      this.setState({
+        apiProfileStatus: profileStatusDetails.fail,
+      })
     }
   }
 
@@ -126,7 +136,7 @@ class Jobs extends Component {
   }
 
   failureButton = () => (
-    <button type="button" onClick={this.retryUser}>
+    <button className="failure-btn" type="button" onClick={this.retryUser}>
       Return
     </button>
   )
@@ -155,16 +165,16 @@ class Jobs extends Component {
   )
 
   getUserDetails = () => {
-    const {apiRequestStatus} = this.state
+    const {apiProfileStatus} = this.state
 
-    switch (apiRequestStatus) {
-      case statusDetails.success:
+    switch (apiProfileStatus) {
+      case profileStatusDetails.success:
         return this.firstFunction()
 
-      case statusDetails.fail:
+      case profileStatusDetails.fail:
         return this.failureButton()
 
-      case statusDetails.inProgress:
+      case profileStatusDetails.inProgress:
         return this.loadingElement()
 
       default:
@@ -177,7 +187,7 @@ class Jobs extends Component {
     switch (apiRequestStatus) {
       case statusDetails.success:
         return jobDetailsList.map(eachJob => (
-          <DisplayJobs key={uuidv4()} jobDetailsList={eachJob} />
+          <DisplayJobs key={eachJob.id} jobDetailsList={eachJob} />
         ))
 
       case statusDetails.fail:
@@ -208,7 +218,12 @@ class Jobs extends Component {
 
   changeEmploymentType = event => {
     console.log(event.target.value)
-    this.setState({employment: event.target.value}, this.getCompanyDetailsAPI)
+    const lastEmployment = event.target.value
+
+    this.setState(
+      prevList => ({employment: [...prevList.employment, lastEmployment]}),
+      this.getCompanyDetailsAPI,
+    )
   }
 
   getFirstFilteredList = () => {
@@ -216,11 +231,10 @@ class Jobs extends Component {
     const employmentTypesList = mergedList[0]
 
     return employmentTypesList.map(eachDataType => (
-      <li className="list-salary" key={uuidv4()}>
+      <li className="list-salary" key={eachDataType.employmentTypeId}>
         <label htmlFor={eachDataType.employmentTypeId}>
           {eachDataType.label}
         </label>
-
         <input
           value={eachDataType.employmentTypeId}
           type="checkbox"
@@ -241,11 +255,11 @@ class Jobs extends Component {
     const salaryRangesList = mergedList[1]
 
     return salaryRangesList.map(eachDataSalary => (
-      <li className="list-salary" key={uuidv4()}>
+      <li className="list-salary" key={eachDataSalary.salaryRangeId}>
         <label htmlFor={eachDataSalary.salaryRangeId} className="label-text">
           {eachDataSalary.label}
         </label>
-
+        <br />
         <input
           value={eachDataSalary.salaryRangeId}
           onChange={this.filterSalaryRange}
@@ -262,27 +276,35 @@ class Jobs extends Component {
     event.preventDefault()
   }
 
-  renderNoJobsFound = () => (
-    <div className="display-no-results">
-      <img
-        src="https://assets.ccbp.in/frontend/react-js/no-jobs-img.png"
-        alt="no jobs"
-        className="no-jobs-logo"
-      />
-      <h1 className="no-jobs-heading">No Jobs Found</h1>
-      <p className="details-no-job">
-        We could not find any jobs. Try other filters
-      </p>
-    </div>
-  )
+  renderNoJobsFound = () => {
+    const {apiRequestStatus} = this.state
+    if (apiRequestStatus === statusDetails.inProgress) {
+      return this.loadingElement
+    }
+    return (
+      <div className="display-no-results">
+        <img
+          src="https://assets.ccbp.in/frontend/react-js/no-jobs-img.png"
+          alt="no jobs"
+          className="no-jobs-logo"
+        />
+        <h1 className="no-jobs-heading">No Jobs Found</h1>
+        <p className="details-no-job">
+          We could not find any jobs. Try other filters
+        </p>
+      </div>
+    )
+  }
 
   render() {
     const {searchInput, jobDetailsList} = this.state
     const length = jobDetailsList.length > 0
     const jsToken = Cookies.get('jwt_token')
+
     if (jsToken === undefined) {
       return <Redirect to="/login" />
     }
+
     return (
       <>
         <Header />
@@ -291,19 +313,16 @@ class Jobs extends Component {
             <div className="Job-profile">{this.getUserDetails()}</div>
             <div className="filter-container">
               <h1 className="common-name">Type of Employment</h1>
-              <form onClick={this.defaultAction}>
-                <ul className="ul-employment-list">
-                  {this.getFirstFilteredList()}
-                </ul>
-              </form>
+
+              <ul className="ul-employment-list">
+                {this.getFirstFilteredList()}
+              </ul>
             </div>
             <div className="filter-container">
               <h1 className="common-name">Salary Range</h1>
-              <form onClick={this.defaultAction}>
-                <ul className="ul-employment-list">
-                  {this.getSecondFilteredList()}
-                </ul>
-              </form>
+              <ul className="ul-employment-list">
+                {this.getSecondFilteredList()}
+              </ul>
             </div>
           </div>
           <div className="right-container">
@@ -319,6 +338,7 @@ class Jobs extends Component {
                 onClick={this.onSearchButton}
                 type="submit"
                 testid="searchButton"
+                className="search-button"
               >
                 <BsSearch className="search-icon" />
               </button>

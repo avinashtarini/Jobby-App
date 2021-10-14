@@ -13,6 +13,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  list-style-type: none;
 }
 .home {
   color: #ffffff;
@@ -67,4 +68,7 @@
     margin-bottom: 4px;
     margin-top: 2px;
   }
+}
+.list-button {
+  margin-left: 60px;
 }

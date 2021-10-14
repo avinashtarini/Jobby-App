@@ -18,11 +18,6 @@ const Home = () => (
           Find Jobs
         </button>
       </Link>
-      <ul>
-        <li>11</li>
-        <li>11</li>
-        <li>11</li>
-      </ul>
     </div>
   </>
 )

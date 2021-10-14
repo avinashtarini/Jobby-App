@@ -1,6 +1,9 @@
 import {Component} from 'react'
 import Loader from 'react-loader-spinner'
 import Cookies from 'js-cookie'
+import {BsStarFill, BsBagFill} from 'react-icons/bs'
+import {MdLocationOn} from 'react-icons/md'
+import {BiLinkExternal} from 'react-icons/bi'
 import Header from '../Header'
 
 import './index.css'
@@ -150,35 +153,52 @@ class JobItem extends Component {
             <Header />
             <div className="job-item-container-item">
               <div className="job-description-container">
-                <div className="main-container">
+                <div className="icon-container">
                   <img
                     src={companyLogoUrl}
                     alt="job details company logo"
                     className="company-logo"
                   />
-                  <div className="job-heading-container">
+                  <div className="rating-container">
                     <h1 className="job-name">{title}</h1>
-                    <p className="rating">{rating}</p>
+                    <div className="rating-display">
+                      <BsStarFill />
+                      <p className="rating">{rating}</p>
+                    </div>
                   </div>
                 </div>
-                <div className="location-type">
-                  <p className="location">{location}</p>
-                  <p className="type">{employmentSection}</p>
-                  <p className="money">{packagePerAnnum}</p>
+                <div className="package-container">
+                  <div className="class-on">
+                    <div className="job-location-container">
+                      <MdLocationOn className="icons-style" />
+                      <p className="city">{location}</p>
+                    </div>
+                    <div className="job-location-container">
+                      <BsBagFill className="icons-style" />
+                      <p className="job-type">{employmentSection}</p>
+                    </div>
+                  </div>
+                  <p className="salary">{packagePerAnnum}</p>
                 </div>
-                <div className="details-container">
-                  <h1 className="head">Description</h1>
-                  <a
-                    href={companyWebsiteUrl}
-                    className="link"
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    Visit
-                  </a>
+
+                <div className="desc-container">
+                  <div className="visit-container">
+                    <h1 className="details-job">Description</h1>
+                    <a
+                      href={companyWebsiteUrl}
+                      className="link"
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      Visit{' '}
+                      <span>
+                        <BiLinkExternal />
+                      </span>
+                    </a>
+                  </div>
                 </div>
-                <p className="company-description">{jobDescription}</p>
-                <p className="skills-req">Skills</p>
+                <p className="company-details">{jobDescription}</p>
+                <p className="details-job">Skills</p>
                 <ul className="skills-container">
                   {skillsList.map(eachLists => (
                     <li className="skill-list" key={eachLists.name}>
@@ -192,8 +212,8 @@ class JobItem extends Component {
                   ))}
                 </ul>
                 <div className="life-at-company-container">
-                  <h1 className="main-second-heading">Life at Company</h1>
-                  <div className="inside-containers">
+                  <h1 className="details-job">Life at Company</h1>
+                  <div className="inside-containers-life">
                     <p className="company-lifestyle">{description}</p>
                     <img
                       src={imageUrl}
@@ -208,30 +228,37 @@ class JobItem extends Component {
                 <ul className="similar-jobs-ul-list">
                   {similarJobsList.map(eachSimilar => (
                     <li className="similar-list-item" key={eachSimilar.id}>
-                      <div className="similar-job-icon-container">
+                      <div className="icon-container">
                         <img
                           src={eachSimilar.companyLogoUrl}
                           alt="similar job company logo"
-                          className="similar-job-logo"
+                          className="company-logo"
                         />
-                        <div className="similar-job-name-container">
-                          <h1 className="similar-name">{eachSimilar.title}</h1>
-                          <p className="similar-rating">{eachSimilar.rating}</p>
+                        <div className="rating-container">
+                          <h1 className="job-name">{eachSimilar.title}</h1>
+                          <div className="rating-display">
+                            <BsStarFill />
+                            <p className="rating">{eachSimilar.rating}</p>
+                          </div>
                         </div>
                       </div>
                       <div className="similar-job-description-container">
-                        <h1 className="similar-heading">Description</h1>
-                        <p className="similar-job-details">
+                        <h1 className="details-job">Description</h1>
+                        <p className="company-details">
                           {eachSimilar.jobDescription}
                         </p>
                       </div>
-                      <div className="similar-job-last-details">
-                        <p className="similar-job-location">
-                          {eachSimilar.location}
-                        </p>
-                        <p className="similar-job-type">
-                          {eachSimilar.employmentType}
-                        </p>
+                      <div className="similar-job-location-type">
+                        <div className="similar-job-location-container">
+                          <MdLocationOn className="similar-icons-style" />
+                          <p className="city">{eachSimilar.location}</p>
+                        </div>
+                        <div className="similar-job-location-container">
+                          <BsBagFill className="similar-icons-style" />
+                          <p className="job-type">
+                            {eachSimilar.employmentType}
+                          </p>
+                        </div>
                       </div>
                     </li>
                   ))}

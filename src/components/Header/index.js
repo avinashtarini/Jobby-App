@@ -1,5 +1,5 @@
 import {Component} from 'react'
-import {Link} from 'react-router-dom'
+import {Link, withRouter} from 'react-router-dom'
 import Cookies from 'js-cookie'
 import {GrMenu, GrHome, GrLogout} from 'react-icons/gr'
 import './index.css'
@@ -7,7 +7,7 @@ import './index.css'
 class Header extends Component {
   state = {activeStatus: false}
 
-  getLogout = () => {
+  getLogout = props => {
     Cookies.remove('jwt_token')
     const {history} = this.props
     history.replace('/login')
@@ -42,17 +42,19 @@ class Header extends Component {
             className="logo"
           />
         </Link>
-        <div className="nav-elements-lg">
+        <ul className="nav-elements-lg">
           <Link to="/" className="home">
-            Home
+            <li className="list-ul">Home</li>
           </Link>
           <Link to="/jobs" className="home">
-            Jobs
+            <li className="list-ul">Jobs</li>
           </Link>
-        </div>
-        <button onClick={this.getLogout} className="logout" type="button">
-          Logout
-        </button>
+          <li className="list-button">
+            <button onClick={this.getLogout} className="logout" type="button">
+              Logout
+            </button>
+          </li>
+        </ul>
         <div className="nav-elements-mobile">
           <GrMenu className="menu-bar-item" onClick={this.onClickIcon} />
           {activeStatus && this.getIconsHome()}
@@ -61,4 +63,4 @@ class Header extends Component {
     )
   }
 }
-export default Header
+export default withRouter(Header)
