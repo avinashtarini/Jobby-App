@@ -7,7 +7,7 @@ import './index.css'
 class Header extends Component {
   state = {activeStatus: false}
 
-  getLogout = props => {
+  getLogout = () => {
     Cookies.remove('jwt_token')
     const {history} = this.props
     history.replace('/login')

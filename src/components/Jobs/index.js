@@ -2,6 +2,7 @@ import {Component} from 'react'
 import {Redirect} from 'react-router-dom'
 import Loader from 'react-loader-spinner'
 import Cookies from 'js-cookie'
+import {v4 as uuidv4} from 'uuid'
 
 import {BsSearch} from 'react-icons/bs'
 import Header from '../Header'
@@ -138,7 +139,7 @@ class Jobs extends Component {
 
   failureButton = () => (
     <button className="failure-btn" type="button" onClick={this.retryUser}>
-      Return
+      Retry
     </button>
   )
 
@@ -158,6 +159,15 @@ class Jobs extends Component {
       </button>
     </div>
   )
+
+  renderJobs = () => {
+    const {jobDetailsList} = this.state
+    return jobDetailsList.length === 0
+      ? this.renderNoJobsFound()
+      : jobDetailsList.map(eachJob => (
+          <DisplayJobs key={eachJob.id} jobDetailsList={eachJob} />
+        ))
+  }
 
   loadingElement = () => (
     <div className="loader-container" testid="loader">
@@ -184,12 +194,10 @@ class Jobs extends Component {
   }
 
   getJobsDetails = () => {
-    const {jobDetailsList, apiRequestStatus} = this.state
+    const {apiRequestStatus} = this.state
     switch (apiRequestStatus) {
       case statusDetails.success:
-        return jobDetailsList.map(eachJob => (
-          <DisplayJobs key={eachJob.id} jobDetailsList={eachJob} />
-        ))
+        return this.renderJobs()
 
       case statusDetails.fail:
         return this.renderJobDetailsFailureView()
@@ -209,7 +217,7 @@ class Jobs extends Component {
     }
   }
 
-  onSearchButton = () => {
+  onSearchButtonElement = () => {
     this.getCompanyDetailsAPI()
   }
 
@@ -305,9 +313,29 @@ class Jobs extends Component {
     )
   }
 
+  searchIconFunction = () => {
+    const {searchInput} = this.state
+    return (
+      <div className="search-icon-container">
+        <input
+          type="search"
+          value={searchInput}
+          onChange={this.onChangeSearchInput}
+          onKeyDown={this.onEnterSearchInput}
+          className="search-input"
+        />
+        <button
+          testid="searchButton"
+          type="button"
+          onClick={this.onSearchButtonElement}
+        >
+          <BsSearch className="search-icon" />
+        </button>
+      </div>
+    )
+  }
+
   render() {
-    const {searchInput, jobDetailsList} = this.state
-    const length = jobDetailsList.length > 0
     const jsToken = Cookies.get('jwt_token')
 
     if (jsToken === undefined) {
@@ -335,24 +363,8 @@ class Jobs extends Component {
             </div>
           </div>
           <div className="right-container">
-            <div className="search-icon-container">
-              <input
-                type="search"
-                value={searchInput}
-                onChange={this.onChangeSearchInput}
-                onKeyDown={this.onEnterSearchInput}
-                className="search-input"
-              />
-              <button
-                onClick={this.onSearchButton}
-                type="submit"
-                testid="searchButton"
-                className="search-button"
-              >
-                <BsSearch className="search-icon" />
-              </button>
-            </div>
-            {length ? this.getJobsDetails() : this.renderNoJobsFound()}
+            {this.searchIconFunction()}
+            {this.getJobsDetails()}
           </div>
         </div>
       </>

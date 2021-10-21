@@ -198,7 +198,7 @@ class JobItem extends Component {
                   </div>
                 </div>
                 <p className="company-details">{jobDescription}</p>
-                <p className="details-job">Skills</p>
+                <h1 className="details-job">Skills</h1>
                 <ul className="skills-container">
                   {skillsList.map(eachLists => (
                     <li className="skill-list" key={eachLists.name}>
